@@ -1,23 +1,30 @@
-Ego [![Build Status](https://drone.io/github.com/benbjohnson/ego/status.png)](https://drone.io/github.com/benbjohnson/ego/latest) [![Coverage Status](https://coveralls.io/repos/benbjohnson/ego/badge.png?branch=master)](https://coveralls.io/r/benbjohnson/ego?branch=master) [![GoDoc](https://godoc.org/github.com/benbjohnson/ego?status.png)](https://godoc.org/github.com/benbjohnson/ego) ![Project status](http://img.shields.io/status/beta.png?color=blue)
+Egon
 ===
+**Note: This is a work in progress.**
 
-Ego is an [ERb](http://ruby-doc.org/stdlib-2.1.0/libdoc/erb/rdoc/ERB.html) style templating language for Go. It works by transpiling templates into pure Go and including them at compile time. These templates are light wrappers around the Go language itself.
+Egon is a templating language for go, based on [Ego](https://github.com/benbjohnson/ego).
+Egon parses .egon templates and converts them into Go source files.
 
 ## Usage
 
-To install ego:
+To install egon:
 
 ```sh
-$ go get github.com/benbjohnson/ego/cmd/ego
+$ go get github.com/commondream/egon/cmd/egon
 ```
 
-Then run ego on a directory. Recursively traverse the directory structure and compile all `.ego` files.
+Running the `egon` command will process all templates for the package name
+given.
 
 ```sh
-$ ego mypkg
+$ egon github.com/commondream/templates
 ```
 
-All ego files found in a package are compiled and written to a single `ego.go` file. The name of the directory is used as the package name.
+All egon files found in a package are converted to .egon.go files. Each .egon.go
+file defines two functions:
+
+1. The Template function.
+2. The View function.
 
 
 ## Language Definition
@@ -32,12 +39,12 @@ An ego template is made up of several types of blocks:
 
 * **Header Block** - These blocks allow you to import packages: `<%% import "encoding/json" %%>`
 
-* **Declaration Block** - This block defines the function signature for your template.
+* **Parameter Block** - This block defines the function signature for your template.
 
 A single declaration block should exist at the top of your template and accept an `w io.Writer` and return an `error`. Other arguments can be added as needed. A function receiver can also be used.
 
 ```
-<%! func MyTmpl(w io.Writer) error %>
+<%! name string %>
 ```
 
 
@@ -46,9 +53,8 @@ A single declaration block should exist at the top of your template and accept a
 Below is an example ego template for a web page:
 
 ```ego
-<%! func MyTmpl(w io.Writer, u *User) error %>
-
 <%% import "strings" %%>
+<%! u *User %>
 
 <html>
   <body>
@@ -64,7 +70,7 @@ Below is an example ego template for a web page:
 </html>
 ```
 
-Once this template is compiled you can call it using the definition you specified:
+Once this template is compiled you can call it using the parameters you specified:
 
 ```go
 myUser := &User{
@@ -78,6 +84,8 @@ err := mypkg.MyTmpl(&buf, myUser)
 
 ## Caveats
 
-Unlike other runtime-based templating languages, ego does not support ad hoc templates. All templates must be generated before compile time.
+Unlike other runtime-based templating languages, Egon does not support ad hoc
+templates. All templates must be generated before compile time.
 
-Ego does not attempt to provide any security around the templates. Just like regular Go code, the security model is up to you.
+Egon does not attempt to provide any security around the templates. Just like
+regular Go code, the security model is up to you.
