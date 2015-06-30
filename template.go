@@ -62,6 +62,12 @@ func (t *Template) Name() string {
 	return name
 }
 
+// SourceFile returns the absolute path to the source file that should be
+// generated from this template.
+func (t *Template) SourceFile() string {
+	return strings.Join([]string{t.Path, ".go"}, "")
+}
+
 // Write writes the template to a writer.
 func (t *Template) Write(w io.Writer) error {
 	var buf bytes.Buffer
