@@ -25,7 +25,6 @@ func TestTemplate_Write(t *testing.T) {
 	p := &Package{Template: tmpl}
 	err := p.Write()
 	assert.NoError(t, err)
-	//buf.WriteTo(os.Stdout)
 }
 
 // PackageName Tests

@@ -57,12 +57,21 @@ func (t *Template) Name() string {
 	// convert to title case and remove spaces
 	name = strings.Title(name)
 	name = strings.Replace(name, " ", "", -1)
-	name = strings.Join([]string{name, "Template"}, "")
 
 	return name
 }
 
-// SourceFile returns the absolute path to the source file that should be
+// TemplateFuncName returns the name of the Template func for this template.
+func (t *Template) TemplateFuncName() string {
+	return strings.Join([]string{t.Name(), "Template"}, "")
+}
+
+// ViewFuncName returns the name fo the View func for this template.
+func (t *Template) ViewFuncName() string {
+	return strings.Join([]string{t.Name(), "View"}, "")
+}
+
+// SourceFile returns the path to the source file that should be
 // generated from this template.
 func (t *Template) SourceFile() string {
 	return strings.Join([]string{t.Path, ".go"}, "")
@@ -74,19 +83,37 @@ func (t *Template) Write(w io.Writer) error {
 
 	params := t.parameterBlocks()
 
+	// write the view
+	buf.WriteString("\n")
+	buf.WriteString(fmt.Sprintf("func %s(", t.ViewFuncName()))
+	t.writeParameters(&buf, params)
+	buf.WriteString(") *egon.View {\n")
+
+	packageName, err := t.PackageName()
+	if err != nil {
+		return err
+	}
+
+	buf.WriteString(fmt.Sprintf("\tpackageName := \"%s\"\n", packageName))
+	buf.WriteString(fmt.Sprintf("\tname := \"%s\"\n", t.Name()))
+	buf.WriteString(fmt.Sprintf("\ttemplatePath := \"%s\"\n", t.Path))
+	buf.WriteString("\trenderFunc := func(w io.Writer) error {\n")
+	paramsAsArgs := []string{}
+	for _, param := range params {
+		paramsAsArgs = append(paramsAsArgs, param.ParamName)
+	}
+	buf.WriteString(fmt.Sprintf("\t\treturn %s(w, %s)\n", t.TemplateFuncName(),
+		strings.Join(paramsAsArgs, ", ")))
+	buf.WriteString("\t}\n")
+	buf.WriteString("\treturn &View{PackageName: packageName, Name: name, TemplatePath: templatePath, RenderFunc: renderFunc}\n")
+	buf.WriteString("}\n\n")
+
+	// render the template func
 	// add the writer param
 	ioParam := ParameterBlock{ParamName: "w", ParamType: "io.Writer"}
 	params = append([]*ParameterBlock{&ioParam}, params...)
-
-	buf.WriteString(fmt.Sprintf("func %s(", t.Name()))
-	maxIndex := len(params) - 1
-	for i, param := range params {
-		param.write(&buf)
-
-		if i < maxIndex {
-			buf.WriteString(", ")
-		}
-	}
+	buf.WriteString(fmt.Sprintf("func %s(", t.TemplateFuncName()))
+	t.writeParameters(&buf, params)
 	buf.WriteString(") {")
 
 	// Write non-header blocks.
@@ -101,8 +128,19 @@ func (t *Template) Write(w io.Writer) error {
 	fmt.Fprint(&buf, "}\n")
 
 	// Write code to external writer.
-	_, err := buf.WriteTo(w)
+	_, err = buf.WriteTo(w)
 	return err
+}
+
+func (t *Template) writeParameters(buf *bytes.Buffer, params []*ParameterBlock) {
+	maxIndex := len(params) - 1
+	for i, param := range params {
+		param.write(buf)
+
+		if i < maxIndex {
+			buf.WriteString(", ")
+		}
+	}
 }
 
 func (t *Template) parameterBlocks() []*ParameterBlock {
