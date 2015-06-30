@@ -17,13 +17,44 @@ type Template struct {
 	Blocks []Block
 }
 
-// Name returns a name for the template as a filename.
-func (t *Template) Name() string {
+// PackageName returns the name of the package, based on the last non-file
+// part of the path.
+func (t *Template) PackageName() (string, error) {
+	path, err := filepath.Abs(t.Path)
+	if err != nil {
+		return "", ErrUnidentifiablePackage
+	}
+
+	// split the path by file separator, rip the first one off (it's always blank)
+	// and then grab the last one
+	parts := strings.Split(path, string(filepath.Separator))
+	parts = parts[1:]
+	if len(parts) < 2 {
+		return "", ErrUnidentifiablePackage
+	}
+	return parts[len(parts)-2], nil
+}
+
+// FileName returns the filename of the template, without the path.
+func (t *Template) FileName() string {
 	_, fileName := filepath.Split(t.Path)
+	return fileName
+}
+
+// Name returns a name for the template as a camel cased string based on
+// the filename.
+func (t *Template) Name() string {
+	fileName := t.FileName()
+
+	// remove the extension
 	parts := strings.Split(fileName, ".")
 	name := parts[0]
+
+	// Filter out any non-letter and digit runes
 	re := regexp.MustCompile("[^\\p{L}0-9]")
 	name = re.ReplaceAllString(name, " ")
+
+	// convert to title case and remove spaces
 	name = strings.Title(name)
 	name = strings.Replace(name, " ", "", -1)
 	name = strings.Join([]string{name, "Template"}, "")

@@ -2,11 +2,10 @@ package egon_test
 
 import (
 	"bytes"
-	"os"
-	"testing"
-
 	. "github.com/commondream/egon"
 	"github.com/stretchr/testify/assert"
+	"log"
+	"testing"
 )
 
 // Ensure that a template can be written to a writer.
@@ -29,5 +28,29 @@ func TestTemplate_Write(t *testing.T) {
 	p := &Package{Templates: []*Template{tmpl}, Name: "foo"}
 	err := p.Write(&buf)
 	assert.NoError(t, err)
-	buf.WriteTo(os.Stdout)
+	//buf.WriteTo(os.Stdout)
+}
+
+// PackageName Tests
+func TestTemplate_PackageName(t *testing.T) {
+	tmpl := &Template{Path: "/some/path/to/foo.egon"}
+	name, err := tmpl.PackageName()
+
+	assert.NoError(t, err)
+	assert.Equal(t, "to", name)
+}
+
+func TestTemplate_PackageNameRelative(t *testing.T) {
+	tmpl := &Template{Path: "template.go"}
+	name, err := tmpl.PackageName()
+
+	assert.NoError(t, err)
+	assert.Equal(t, "egon", name)
+}
+
+func TestTemplate_PackageNameNoFolder(t *testing.T) {
+	tmpl := &Template{Path: "/foo.egon"}
+	name, err := tmpl.PackageName()
+	log.Println(name)
+	assert.Error(t, err)
 }
