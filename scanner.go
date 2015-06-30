@@ -1,4 +1,4 @@
-package ego
+package egon
 
 import (
 	"bufio"

@@ -1,4 +1,4 @@
-package ego_test
+package egon_test
 
 import (
 	"bytes"
@@ -18,7 +18,6 @@ func TestTemplate_Write(t *testing.T) {
 		Blocks: []Block{
 			&TextBlock{Content: "<html>", Pos: Pos{Path: "foo.ego", LineNo: 4}},
 			&HeaderBlock{Content: "import \"fmt\"", Pos: Pos{Path: "foo.ego", LineNo: 8}},
-
 			&DeclarationBlock{ParamName: "nums", ParamType: "[]int"},
 			&CodeBlock{Content: "  for _, num := range nums {"},
 			&TextBlock{Content: "    <p>"},
