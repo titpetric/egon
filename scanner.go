@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"strings"
 )
 
 // Scanner is a tokenizer for Ego templates.
@@ -95,7 +96,14 @@ func (s *Scanner) scanDeclarationBlock() (Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	b.Content = content
+
+	fields := strings.Fields(content)
+	if len(fields) < 2 {
+		return nil, ErrDeclarationFormat
+	}
+
+	b.ParamName = fields[0]
+	b.ParamType = strings.Join(fields[1:], " ")
 	return b, nil
 }
 

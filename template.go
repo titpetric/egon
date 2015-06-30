@@ -9,6 +9,9 @@ import (
 	"go/token"
 	"io"
 	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 // Template represents an entire Ego template.
@@ -19,17 +22,39 @@ type Template struct {
 	Blocks []Block
 }
 
+// Name returns a name for the template as a filename.
+func (t *Template) Name() string {
+	_, fileName := filepath.Split(t.Path)
+	parts := strings.Split(fileName, ".")
+	name := parts[0]
+	re := regexp.MustCompile("[^\\p{L}0-9]")
+	name = re.ReplaceAllString(name, " ")
+	name = strings.Title(name)
+	name = strings.Replace(name, " ", "", -1)
+
+	return name
+}
+
 // Write writes the template to a writer.
 func (t *Template) Write(w io.Writer) error {
 	var buf bytes.Buffer
 
-	decl := t.declarationBlock()
-	if decl == nil {
-		return ErrDeclarationRequired
-	}
+	params := t.declarationBlocks()
 
-	// Write function declaration.
-	decl.write(&buf)
+	// add the writer param
+	ioParam := DeclarationBlock{ParamName: "w", ParamType: "io.Writer"}
+	params = append([]*DeclarationBlock{&ioParam}, params...)
+
+	buf.WriteString(fmt.Sprintf("func %s(", t.Name()))
+	maxIndex := len(params) - 1
+	for i, param := range params {
+		param.write(&buf)
+
+		if i < maxIndex {
+			buf.WriteString(", ")
+		}
+	}
+	buf.WriteString(") {")
 
 	// Write non-header blocks.
 	for _, b := range t.nonHeaderBlocks() {
@@ -47,13 +72,14 @@ func (t *Template) Write(w io.Writer) error {
 	return err
 }
 
-func (t *Template) declarationBlock() *DeclarationBlock {
+func (t *Template) declarationBlocks() []*DeclarationBlock {
+	blocks := []*DeclarationBlock{}
 	for _, b := range t.Blocks {
 		if b, ok := b.(*DeclarationBlock); ok {
-			return b
+			blocks = append(blocks, b)
 		}
 	}
-	return nil
+	return blocks
 }
 
 func (t *Template) headerBlocks() []*HeaderBlock {
@@ -115,13 +141,14 @@ func (b *PrintBlock) block()       {}
 
 // DeclarationBlock represents a block that declaration the function signature.
 type DeclarationBlock struct {
-	Pos     Pos
-	Content string
+	Pos       Pos
+	ParamName string
+	ParamType string
 }
 
 func (b *DeclarationBlock) write(buf *bytes.Buffer) error {
 	b.Pos.write(buf)
-	fmt.Fprintf(buf, "%s {\n", b.Content)
+	fmt.Fprintf(buf, "%s %s", b.ParamName, b.ParamType)
 	return nil
 }
 

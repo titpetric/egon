@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/benbjohnson/ego"
+	. "github.com/commondream/egon"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,10 +14,12 @@ import (
 func TestTemplate_Write(t *testing.T) {
 	var buf bytes.Buffer
 	tmpl := &Template{
+		Path: "/some/path/to/foo.egon",
 		Blocks: []Block{
 			&TextBlock{Content: "<html>", Pos: Pos{Path: "foo.ego", LineNo: 4}},
 			&HeaderBlock{Content: "import \"fmt\"", Pos: Pos{Path: "foo.ego", LineNo: 8}},
-			&DeclarationBlock{Content: " func MyTemplate(w io.Writer, nums []int) error "},
+
+			&DeclarationBlock{ParamName: "nums", ParamType: "[]int"},
 			&CodeBlock{Content: "  for _, num := range nums {"},
 			&TextBlock{Content: "    <p>"},
 			&RawPrintBlock{Content: "num + 1"},
@@ -29,6 +31,7 @@ func TestTemplate_Write(t *testing.T) {
 	p := &Package{Templates: []*Template{tmpl}, Name: "foo"}
 	err := p.Write(&buf)
 	assert.NoError(t, err)
+	buf.WriteTo(os.Stdout)
 }
 
 func warn(v ...interface{})              { fmt.Fprintln(os.Stderr, v...) }
