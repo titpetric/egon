@@ -70,7 +70,7 @@ func (p *Package) writeHeader(w io.Writer) error {
 	// Write deduped imports.
 	var decls = map[string]bool{`:"fmt"`: true, `:"io"`: true}
 	fmt.Fprint(&buf, "import (\n")
-	fmt.Fprintln(&buf, `"egon"`)
+	fmt.Fprintln(&buf, `"github.com/commondream/egon"`)
 	fmt.Fprintln(&buf, `"fmt"`)
 	if p.Template.hasEscapedPrintBlock() {
 		fmt.Fprintln(&buf, `"html"`)

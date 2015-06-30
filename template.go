@@ -114,7 +114,7 @@ func (t *Template) Write(w io.Writer) error {
 	params = append([]*ParameterBlock{&ioParam}, params...)
 	buf.WriteString(fmt.Sprintf("func %s(", t.TemplateFuncName()))
 	t.writeParameters(&buf, params)
-	buf.WriteString(") {")
+	buf.WriteString(") error {")
 
 	// Write non-header blocks.
 	for _, b := range t.nonHeaderBlocks() {
