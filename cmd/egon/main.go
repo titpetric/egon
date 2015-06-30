@@ -54,7 +54,7 @@ func (v *visitor) visit(path string, info os.FileInfo, err error) error {
 	if info == nil {
 		return fmt.Errorf("file not found: %s", path)
 	}
-	if !info.IsDir() && filepath.Ext(path) == ".ego" {
+	if !info.IsDir() && filepath.Ext(path) == ".egon" {
 		v.paths = append(v.paths, path)
 	}
 	return nil
