@@ -5,6 +5,17 @@ Egon
 Egon is a templating language for go, based on [Ego](https://github.com/benbjohnson/ego).
 Egon parses .egon templates and converts them into Go source files.
 
+## Differences with Ego
+
+* Ego generates a single source file for every template in a package. Egon
+  generates a source file per template.
+* Ego includes options to name the output package and output files. Egon always
+  determines these names based on the source structure.
+* Ego generates a single function per template for rendering the template. Egon
+  includes a second function, [Template]View that returns a function wrapping
+  the typical parameters that only requires an io.Writer.
+* Ego requires a full function definition, Egon only requires parameter declarations.
+
 ## Usage
 
 To install egon:
