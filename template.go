@@ -10,7 +10,7 @@ import (
 )
 
 // Template represents an entire Ego template.
-// A template consists of a declaration block followed by zero or more blocks.
+// Templates consist of a set of parameters and other block.
 // Blocks can be either a TextBlock, a PrintBlock, a RawPrintBlock, or a CodeBlock.
 type Template struct {
 	Path   string
@@ -35,11 +35,11 @@ func (t *Template) Name() string {
 func (t *Template) Write(w io.Writer) error {
 	var buf bytes.Buffer
 
-	params := t.declarationBlocks()
+	params := t.parameterBlocks()
 
 	// add the writer param
-	ioParam := DeclarationBlock{ParamName: "w", ParamType: "io.Writer"}
-	params = append([]*DeclarationBlock{&ioParam}, params...)
+	ioParam := ParameterBlock{ParamName: "w", ParamType: "io.Writer"}
+	params = append([]*ParameterBlock{&ioParam}, params...)
 
 	buf.WriteString(fmt.Sprintf("func %s(", t.Name()))
 	maxIndex := len(params) - 1
@@ -68,10 +68,10 @@ func (t *Template) Write(w io.Writer) error {
 	return err
 }
 
-func (t *Template) declarationBlocks() []*DeclarationBlock {
-	blocks := []*DeclarationBlock{}
+func (t *Template) parameterBlocks() []*ParameterBlock {
+	blocks := []*ParameterBlock{}
 	for _, b := range t.Blocks {
-		if b, ok := b.(*DeclarationBlock); ok {
+		if b, ok := b.(*ParameterBlock); ok {
 			blocks = append(blocks, b)
 		}
 	}
@@ -92,7 +92,7 @@ func (t *Template) nonHeaderBlocks() []Block {
 	var blocks []Block
 	for _, b := range t.Blocks {
 		switch b.(type) {
-		case *DeclarationBlock, *HeaderBlock:
+		case *ParameterBlock, *HeaderBlock:
 		default:
 			blocks = append(blocks, b)
 		}

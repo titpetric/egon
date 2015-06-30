@@ -60,7 +60,7 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 	// Check the next character to see if it's a special type of block.
 	switch ch {
 	case '!':
-		return s.scanDeclarationBlock()
+		return s.scanParameterBlock()
 	case '%':
 		return s.scanHeaderBlock()
 	case '=':
@@ -70,12 +70,13 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 		} else if err != nil {
 			return nil, err
 		}
+
 		if ch == '=' {
 			return s.scanRawPrintBlock()
-		} else {
-			s.unread()
-			return s.scanPrintBlock()
 		}
+
+		s.unread()
+		return s.scanPrintBlock()
 	}
 
 	// Otherwise read the contents of the code block.
@@ -90,8 +91,8 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 	return b, nil
 }
 
-func (s *Scanner) scanDeclarationBlock() (Block, error) {
-	b := &DeclarationBlock{Pos: s.pos}
+func (s *Scanner) scanParameterBlock() (Block, error) {
+	b := &ParameterBlock{Pos: s.pos}
 	content, err := s.scanContent()
 	if err != nil {
 		return nil, err
@@ -99,7 +100,7 @@ func (s *Scanner) scanDeclarationBlock() (Block, error) {
 
 	fields := strings.Fields(content)
 	if len(fields) < 2 {
-		return nil, ErrDeclarationFormat
+		return nil, ErrParameterFormat
 	}
 
 	b.ParamName = fields[0]

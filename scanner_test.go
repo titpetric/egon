@@ -161,20 +161,20 @@ func TestScannerEscapedPrintBlock(t *testing.T) {
 	}
 }
 
-// Ensure that a declaration block can be scanned.
-func TestScannerDeclarationBlock(t *testing.T) {
+// Ensure that parameter blocks can be scanned.
+func TestScannerParameterBlock(t *testing.T) {
 	s := NewScanner(bytes.NewBufferString(`<%! foo string %>`), "tmpl.egon")
 	b, err := s.Scan()
 	assert.NoError(t, err)
-	if b, ok := b.(*DeclarationBlock); assert.True(t, ok) {
+	if b, ok := b.(*ParameterBlock); assert.True(t, ok) {
 		assert.Equal(t, b.ParamName, `foo`)
 		assert.Equal(t, b.ParamType, `string`)
 		assert.Equal(t, b.Pos, Pos{Path: "tmpl.egon", LineNo: 1})
 	}
 }
 
-// Ensure that a declaration block that ends unexpectedly returns an error.
-func TestScannerDeclarationBlockUnexpectedEOF(t *testing.T) {
+// Ensure that a parameter block that ends unexpectedly returns an error.
+func TestScannerParameterBlockUnexpectedEOF(t *testing.T) {
 	s := NewScanner(bytes.NewBufferString(`<%! `), "tmpl.egon")
 	_, err := s.Scan()
 	assert.Equal(t, err, io.ErrUnexpectedEOF)

@@ -3,8 +3,6 @@ package egon
 import "errors"
 
 var (
-	// ErrDeclarationRequired is returned when there is no declaration block
-	// in a template.
-	ErrDeclarationRequired = errors.New("declaration required")
-	ErrDeclarationFormat   = errors.New("declarations should be of form `param type`")
+	// ErrParameterFormat notifies the user that a parameter tag is poorly formatted.
+	ErrParameterFormat = errors.New("parameters should be of form `param type`")
 )
