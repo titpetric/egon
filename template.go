@@ -105,7 +105,7 @@ func (t *Template) Write(w io.Writer) error {
 	buf.WriteString(fmt.Sprintf("\t\treturn %s(w, %s)\n", t.TemplateFuncName(),
 		strings.Join(paramsAsArgs, ", ")))
 	buf.WriteString("\t}\n")
-	buf.WriteString("\treturn &View{PackageName: packageName, Name: name, TemplatePath: templatePath, RenderFunc: renderFunc}\n")
+	buf.WriteString("\treturn &egon.View{PackageName: packageName, Name: name, TemplatePath: templatePath, RenderFunc: renderFunc}\n")
 	buf.WriteString("}\n\n")
 
 	// render the template func
