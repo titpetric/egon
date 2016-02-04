@@ -134,6 +134,14 @@ func (s *Scanner) scanPrintBlock() (Block, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if Config.StringOptimisations {
+		if len(content) > 2 && content[1] == ' ' {
+			b.Type = content[0]
+			content = content[2:]
+		}
+	}
+
 	b.Content = content
 	return b, nil
 }

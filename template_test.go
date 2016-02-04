@@ -1,7 +1,7 @@
 package egon_test
 
 import (
-	. "github.com/commondream/egon"
+	. "github.com/SlinSo/egon"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 // Ensure that a template can be written to a writer.
 func TestTemplate_Write(t *testing.T) {
 	tmpl := &Template{
-		Path: "tmp/foo.egon",
+		Path: "/tmp/foo.egon",
 		Blocks: []Block{
 			&TextBlock{Content: "<html>", Pos: Pos{Path: "foo.ego", LineNo: 4}},
 			&HeaderBlock{Content: "import \"fmt\"", Pos: Pos{Path: "tmp/foo.ego", LineNo: 8}},

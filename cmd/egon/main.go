@@ -1,29 +1,39 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"go/scanner"
 	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/commondream/egon"
+	"github.com/SlinSo/egon"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-func main() {
-	flag.Parse()
-	log.SetFlags(0)
+func init()  {
+	kingpin.Version("0.8.0")
+	kingpin.Flag("extension", "templatefile extension").Short('e').Default("egon").StringVar(&egon.Config.TmplExtension)
+	kingpin.Flag("generateview", "generate view functions").Short('v').Default("false").BoolVar(&egon.Config.GenerateView)
+	kingpin.Flag("typesafe", "if present use provided flags for format-string").Short('t').Default("true").BoolVar(&egon.Config.Typesafe)
+	kingpin.Flag("stropt", "optimise string handling to reduce allocations").Short('s').Default("true").BoolVar(&egon.Config.StringOptimisations)
+	kingpin.Flag("debug", "include debug comments in generated code").Short('d').Default("false").BoolVar(&egon.Config.Debug)
+	kingpin.Arg("folders", "folders to be processed").StringsVar(&egon.Config.Folders)
+}
 
-	// If no paths are provided then use the present working directory.
-	roots := flag.Args()
-	if len(roots) == 0 {
-		roots = []string{"."}
+func main() {
+	log.SetFlags(0)
+	kingpin.CommandLine.Help = "Generate native Go code from ERB-style Templates"
+	kingpin.Parse()
+	
+	if len(egon.Config.Folders) == 0 {
+		egon.Config.Folders = []string{"."}
 	}
 
-	// Recursively retrieve all ego templates
+	// Recursively retrieve all templates
 	var v visitor
-	for _, root := range roots {
+	for _, root := range egon.Config.Folders {
+		log.Printf("scanning folder [%s]", root)
 		if err := filepath.Walk(root, v.visit); err != nil {
 			scanner.PrintError(os.Stderr, err)
 			os.Exit(1)
@@ -54,7 +64,7 @@ func (v *visitor) visit(path string, info os.FileInfo, err error) error {
 	if info == nil {
 		return fmt.Errorf("file not found: %s", path)
 	}
-	if !info.IsDir() && filepath.Ext(path) == ".egon" {
+	if !info.IsDir() && filepath.Ext(path) == ("." + egon.Config.TmplExtension) {
 		v.paths = append(v.paths, path)
 	}
 	return nil

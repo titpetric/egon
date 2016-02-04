@@ -13,6 +13,6 @@ type TextBlock struct {
 
 func (b *TextBlock) write(buf *bytes.Buffer) error {
 	b.Pos.write(buf)
-	fmt.Fprintf(buf, `_, _ = fmt.Fprint(w, %q)`+"\n", b.Content)
+	fmt.Fprintf(buf, `io.WriteString(w, %q)`+"\n", b.Content)
 	return nil
 }

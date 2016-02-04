@@ -82,31 +82,33 @@ func (t *Template) Write(w io.Writer) error {
 	var buf bytes.Buffer
 
 	params := t.parameterBlocks()
-
-	// write the view
 	buf.WriteString("\n")
-	buf.WriteString(fmt.Sprintf("func %s(", t.ViewFuncName()))
-	t.writeParameters(&buf, params)
-	buf.WriteString(") *egon.View {\n")
-
-	packageName, err := t.PackageName()
-	if err != nil {
-		return err
+		
+	// optionally write the view
+	if (Config.GenerateView) {
+		buf.WriteString(fmt.Sprintf("func %s(", t.ViewFuncName()))
+		t.writeParameters(&buf, params)
+		buf.WriteString(") *egon.View {\n")
+	
+		packageName, err := t.PackageName()
+		if err != nil {
+			return err
+		}
+	
+		buf.WriteString(fmt.Sprintf("\tpackageName := \"%s\"\n", packageName))
+		buf.WriteString(fmt.Sprintf("\tname := \"%s\"\n", t.Name()))
+		buf.WriteString(fmt.Sprintf("\ttemplatePath := \"%s\"\n", t.Path))
+		buf.WriteString("\trenderFunc := func(w io.Writer) error {\n")
+		paramsAsArgs := []string{}
+		for _, param := range params {
+			paramsAsArgs = append(paramsAsArgs, param.ParamName)
+		}
+		buf.WriteString(fmt.Sprintf("\t\treturn %s(w, %s)\n", t.TemplateFuncName(),
+			strings.Join(paramsAsArgs, ", ")))
+		buf.WriteString("\t}\n")
+		buf.WriteString("\treturn &egon.View{PackageName: packageName, Name: name, TemplatePath: templatePath, RenderFunc: renderFunc}\n")
+		buf.WriteString("}\n\n")
 	}
-
-	buf.WriteString(fmt.Sprintf("\tpackageName := \"%s\"\n", packageName))
-	buf.WriteString(fmt.Sprintf("\tname := \"%s\"\n", t.Name()))
-	buf.WriteString(fmt.Sprintf("\ttemplatePath := \"%s\"\n", t.Path))
-	buf.WriteString("\trenderFunc := func(w io.Writer) error {\n")
-	paramsAsArgs := []string{}
-	for _, param := range params {
-		paramsAsArgs = append(paramsAsArgs, param.ParamName)
-	}
-	buf.WriteString(fmt.Sprintf("\t\treturn %s(w, %s)\n", t.TemplateFuncName(),
-		strings.Join(paramsAsArgs, ", ")))
-	buf.WriteString("\t}\n")
-	buf.WriteString("\treturn &egon.View{PackageName: packageName, Name: name, TemplatePath: templatePath, RenderFunc: renderFunc}\n")
-	buf.WriteString("}\n\n")
 
 	// render the template func
 	// add the writer param
@@ -114,7 +116,7 @@ func (t *Template) Write(w io.Writer) error {
 	params = append([]*ParameterBlock{&ioParam}, params...)
 	buf.WriteString(fmt.Sprintf("func %s(", t.TemplateFuncName()))
 	t.writeParameters(&buf, params)
-	buf.WriteString(") error {")
+	buf.WriteString(") error {\n")
 
 	// Write non-header blocks.
 	for _, b := range t.nonHeaderBlocks() {
@@ -128,7 +130,7 @@ func (t *Template) Write(w io.Writer) error {
 	fmt.Fprint(&buf, "}\n")
 
 	// Write code to external writer.
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	return err
 }
 
@@ -175,10 +177,34 @@ func (t *Template) nonHeaderBlocks() []Block {
 	return blocks
 }
 
+
 func (t *Template) hasEscapedPrintBlock() bool {
 	for _, b := range t.Blocks {
 		if _, ok := b.(*PrintBlock); ok {
+			
 			return true
+		}
+	}
+	return false
+}
+
+func (t *Template) hasItoaPrintBlock() bool {
+	for _, b := range t.Blocks {
+		if pBlock, ok := b.(*PrintBlock); ok {
+			if (pBlock.Type == 'd') {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (t *Template) hasFmtPrintBlock() bool {
+	for _, b := range t.Blocks {
+		if pBlock, ok := b.(*PrintBlock); ok {
+			if (pBlock.Type != 'd' && pBlock.Type != 's') {
+				return true
+			}
 		}
 	}
 	return false

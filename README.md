@@ -1,5 +1,17 @@
 Egon
 ===
+## Added in this fork
+* Added flags to the egon command
+* Added view geneartion optional, because it is only needed if your web framework supports late rendering
+* Added type safe generation like in [ftmpl](https://github.com/tkrajina/ftmpl) - use go vet
+* Added Debug mode, otherwise dont print comments inside generated functions
+* Added string optimisation, removed Sprintf for strings
+* Reverted fmt.Fprintf -> io.WriteString to avoid unnecessary allocations
+* Gin Integration Example
+* Minify Output
+* XML Rendering (xml.Escape...) _future_
+
+===
 **Note: This is a work in progress.**
 
 Egon is a templating language for go, based on [Ego](https://github.com/benbjohnson/ego).

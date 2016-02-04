@@ -5,7 +5,7 @@ import (
 	"io"
 	"testing"
 
-	. "github.com/commondream/egon"
+	. "github.com/SlinSo/egon"
 	"github.com/stretchr/testify/assert"
 )
 

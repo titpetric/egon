@@ -9,10 +9,11 @@ import (
 type RawPrintBlock struct {
 	Pos     Pos
 	Content string
+	Type     byte
 }
 
 func (b *RawPrintBlock) write(buf *bytes.Buffer) error {
 	b.Pos.write(buf)
-	fmt.Fprintf(buf, `_, _ = fmt.Fprintf(w, "%%v", %s)`+"\n", b.Content)
+	fmt.Fprintf(buf, `io.WriteString(w, %s)`+"\n", b.Content)
 	return nil
 }
