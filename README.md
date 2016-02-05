@@ -7,9 +7,11 @@ Egon
 * Added Debug mode, otherwise dont print comments inside generated functions
 * Added string optimisation, removed Sprintf for strings
 * Reverted fmt.Fprintf -> io.WriteString to avoid unnecessary allocations
+
+## TODO
 * Gin Integration Example
 * Minify Output
-* XML Rendering (xml.Escape...) _future_
+* XML Rendering (xml.Escape...)
 
 ===
 **Note: This is a work in progress.**
