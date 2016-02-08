@@ -6,11 +6,11 @@ Egon
 * Added type safe generation like in [ftmpl](https://github.com/tkrajina/ftmpl) - use go vet
 * Added Debug mode, otherwise dont print comments inside generated functions
 * Added string optimisation, removed Sprintf for strings
+* Added examples
+* Added minify, currently only tested with HTML code
 * Reverted fmt.Fprintf -> io.WriteString to avoid unnecessary allocations
 
 ## TODO
-* Gin Integration Example
-* Minify Output
 * XML Rendering (xml.Escape...)
 
 ===

@@ -8,4 +8,5 @@ var Config struct {
 	Version string
 	Folders []string
 	Debug bool
+	Minify bool
 }

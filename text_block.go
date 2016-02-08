@@ -11,8 +11,39 @@ type TextBlock struct {
 	Content string
 }
 
+func stripWhitespace(s string) string {
+	out := make([]byte, 0)
+	seenSpace := false
+	for _, c := range s {
+		switch c {
+		case '\t', '\n', '\v', '\f', '\r':
+				seenSpace = true
+		case ' ':
+			if !seenSpace {
+				out = append(out, byte(c))
+				seenSpace = true
+			}
+		default:
+			out = append(out, byte(c))
+			seenSpace = false
+		}
+	}
+	return string(out)
+}
+
 func (b *TextBlock) write(buf *bytes.Buffer) error {
-	b.Pos.write(buf)
-	fmt.Fprintf(buf, `io.WriteString(w, %q)`+"\n", b.Content)
+	if (Config.Minify) {
+		b.Content = stripWhitespace(b.Content)
+		/*
+		for (strings.Contains(b.Content, "  ")) {
+			b.Content = strings.Replace(b.Content, "  ", " ", -1)
+		}
+		b.Content = strings.Replace(b.Content, "> <", "><", -1)
+		*/
+	}
+	if (len(b.Content) > 0) {
+		b.Pos.write(buf)
+		fmt.Fprintf(buf, `io.WriteString(w, %q)`+"\n", b.Content)
+	}
 	return nil
 }
