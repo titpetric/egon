@@ -34,12 +34,6 @@ func stripWhitespace(s string) string {
 func (b *TextBlock) write(buf *bytes.Buffer) error {
 	if (Config.Minify) {
 		b.Content = stripWhitespace(b.Content)
-		/*
-		for (strings.Contains(b.Content, "  ")) {
-			b.Content = strings.Replace(b.Content, "  ", " ", -1)
-		}
-		b.Content = strings.Replace(b.Content, "> <", "><", -1)
-		*/
 	}
 	if (len(b.Content) > 0) {
 		b.Pos.write(buf)
