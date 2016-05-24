@@ -95,7 +95,7 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 
 func (s *Scanner) scanCommentBlock() (Block, error) {
 	b := &CommentBlock{Pos: s.pos}
-	content, err := s.scanContent()
+	content, err := s.scanCommentContent()
 	if err != nil {
 		return nil, err
 	}
@@ -234,6 +234,40 @@ func (s *Scanner) scanHeaderContent() (string, error) {
 	}
 	return string(buf.Bytes()), nil
 }
+
+// scans the reader until #%> is reached.
+func (s *Scanner) scanCommentContent() (string, error) {
+	var buf bytes.Buffer
+	for {
+		ch, err := s.read()
+		if err == io.EOF {
+			return "", io.ErrUnexpectedEOF
+		} else if ch == '#' {
+			ch, err := s.read()
+			if err == io.EOF {
+				return "", io.ErrUnexpectedEOF
+			} else if ch == '%' {
+				ch, err := s.read()
+				if err == io.EOF {
+					return "", io.ErrUnexpectedEOF
+				} else if ch == '>' {
+					break
+				} else {
+					buf.WriteRune('#')
+					buf.WriteRune('%')
+					buf.WriteRune(ch)
+				}
+			} else {
+				buf.WriteRune('%')
+				buf.WriteRune(ch)
+			}
+		} else {
+			buf.WriteRune(ch)
+		}
+	}
+	return string(buf.Bytes()), nil
+}
+
 
 func (s *Scanner) read() (rune, error) {
 	ch, _, err := s.r.ReadRune()
