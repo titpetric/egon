@@ -12,14 +12,17 @@ func TestTemplate_Write(t *testing.T) {
 		Path: "/tmp/foo.egon",
 		Blocks: []Block{
 			&TextBlock{Content: "<html>", Pos: Pos{Path: "foo.ego", LineNo: 4}},
+			&CommentBlock{Content: "remove"},
 			&HeaderBlock{Content: "import \"fmt\"", Pos: Pos{Path: "tmp/foo.ego", LineNo: 8}},
 			&ParameterBlock{ParamName: "nums", ParamType: "[]int"},
 			&CodeBlock{Content: "  for _, num := range nums {"},
+			&CommentBlock{Content: "remove"},
 			&TextBlock{Content: "    <p>"},
 			&RawPrintBlock{Content: "num + 1"},
 			&TextBlock{Content: "    </p>"},
 			&CodeBlock{Content: "  }"},
 			&TextBlock{Content: "</html>"},
+			&CommentBlock{Content: "remove"},
 		},
 	}
 	p := &Package{Template: tmpl}

@@ -61,6 +61,8 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 	switch ch {
 	case '!':
 		return s.scanParameterBlock()
+	case '#':
+		return s.scanCommentBlock()
 	case '%':
 		return s.scanHeaderBlock()
 	case '=':
@@ -88,6 +90,16 @@ func (s *Scanner) scanCodeBlock() (Block, error) {
 	}
 	b.Content = content
 
+	return b, nil
+}
+
+func (s *Scanner) scanCommentBlock() (Block, error) {
+	b := &CommentBlock{Pos: s.pos}
+	content, err := s.scanContent()
+	if err != nil {
+		return nil, err
+	}
+	b.Content = content
 	return b, nil
 }
 
