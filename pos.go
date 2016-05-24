@@ -14,6 +14,6 @@ type Pos struct {
 
 func (p *Pos) write(buf *bytes.Buffer) {
 	if Config.Debug && p != nil && p.Path != "" && p.LineNo > 0 {
-		fmt.Fprintf(buf, "//line %s:%d\n",  filepath.Base(p.Path), p.LineNo)
+		fmt.Fprintf(buf, "//line %s:%d\n", filepath.Base(p.Path), p.LineNo)
 	}
 }

@@ -70,7 +70,7 @@ func (p *Package) writeHeader(w io.Writer) error {
 	// Write deduped imports.
 	var decls = map[string]bool{`:"fmt"`: true, `:"io"`: true}
 	fmt.Fprint(&buf, "import (\n")
-	if (Config.GenerateView) {
+	if Config.GenerateView {
 		fmt.Fprintln(&buf, `"github.com/SlinSo/egon"`)
 	}
 	if p.Template.hasFmtPrintBlock() {

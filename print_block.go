@@ -7,9 +7,9 @@ import (
 
 // PrintBlock represents a block that will HTML escape the contents before outputting
 type PrintBlock struct {
-	Pos      Pos
-	Content  string
-	Type     byte
+	Pos     Pos
+	Content string
+	Type    byte
 }
 
 func (b *PrintBlock) write(buf *bytes.Buffer) error {

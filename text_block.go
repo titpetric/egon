@@ -17,7 +17,7 @@ func stripWhitespace(s string) string {
 	for _, c := range s {
 		switch c {
 		case '\t', '\n', '\v', '\f', '\r':
-				seenSpace = true
+			seenSpace = true
 		case ' ':
 			if !seenSpace {
 				out = append(out, byte(c))
@@ -32,10 +32,10 @@ func stripWhitespace(s string) string {
 }
 
 func (b *TextBlock) write(buf *bytes.Buffer) error {
-	if (Config.Minify) {
+	if Config.Minify {
 		b.Content = stripWhitespace(b.Content)
 	}
-	if (len(b.Content) > 0) {
+	if len(b.Content) > 0 {
 		b.Pos.write(buf)
 		fmt.Fprintf(buf, `io.WriteString(w, %q)`+"\n", b.Content)
 	}

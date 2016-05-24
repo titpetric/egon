@@ -9,7 +9,7 @@ import (
 type RawPrintBlock struct {
 	Pos     Pos
 	Content string
-	Type     byte
+	Type    byte
 }
 
 func (b *RawPrintBlock) write(buf *bytes.Buffer) error {

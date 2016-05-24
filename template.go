@@ -83,18 +83,18 @@ func (t *Template) Write(w io.Writer) error {
 
 	params := t.parameterBlocks()
 	buf.WriteString("\n")
-		
+
 	// optionally write the view
-	if (Config.GenerateView) {
+	if Config.GenerateView {
 		buf.WriteString(fmt.Sprintf("func %s(", t.ViewFuncName()))
 		t.writeParameters(&buf, params)
 		buf.WriteString(") *egon.View {\n")
-	
+
 		packageName, err := t.PackageName()
 		if err != nil {
 			return err
 		}
-	
+
 		buf.WriteString(fmt.Sprintf("\tpackageName := \"%s\"\n", packageName))
 		buf.WriteString(fmt.Sprintf("\tname := \"%s\"\n", t.Name()))
 		buf.WriteString(fmt.Sprintf("\ttemplatePath := \"%s\"\n", t.Path))
@@ -177,11 +177,10 @@ func (t *Template) nonHeaderBlocks() []Block {
 	return blocks
 }
 
-
 func (t *Template) hasEscapedPrintBlock() bool {
 	for _, b := range t.Blocks {
 		if _, ok := b.(*PrintBlock); ok {
-			
+
 			return true
 		}
 	}
@@ -191,7 +190,7 @@ func (t *Template) hasEscapedPrintBlock() bool {
 func (t *Template) hasItoaPrintBlock() bool {
 	for _, b := range t.Blocks {
 		if pBlock, ok := b.(*PrintBlock); ok {
-			if (pBlock.Type == 'd') {
+			if pBlock.Type == 'd' {
 				return true
 			}
 		}
@@ -202,7 +201,7 @@ func (t *Template) hasItoaPrintBlock() bool {
 func (t *Template) hasFmtPrintBlock() bool {
 	for _, b := range t.Blocks {
 		if pBlock, ok := b.(*PrintBlock); ok {
-			if (pBlock.Type != 'd' && pBlock.Type != 's') {
+			if pBlock.Type != 'd' && pBlock.Type != 's' {
 				return true
 			}
 		}
