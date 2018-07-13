@@ -11,7 +11,7 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-func init()  {
+func init() {
 	kingpin.Version("0.9.0")
 	kingpin.Flag("extension", "templatefile extension").Short('e').Default("egon").StringVar(&egon.Config.TmplExtension)
 	kingpin.Flag("generateview", "generate view functions").Short('v').Default("false").BoolVar(&egon.Config.GenerateView)
@@ -26,7 +26,7 @@ func main() {
 	log.SetFlags(0)
 	kingpin.CommandLine.Help = "Generate native Go code from ERB-style Templates"
 	kingpin.Parse()
-	
+
 	if len(egon.Config.Folders) == 0 {
 		egon.Config.Folders = []string{"."}
 	}
@@ -65,7 +65,7 @@ func (v *visitor) visit(path string, info os.FileInfo, err error) error {
 	if info == nil {
 		return fmt.Errorf("file not found: %s", path)
 	}
-	if !info.IsDir() && filepath.Ext(path) == ("." + egon.Config.TmplExtension) {
+	if !info.IsDir() && filepath.Ext(path) == ("."+egon.Config.TmplExtension) {
 		v.paths = append(v.paths, path)
 	}
 	return nil

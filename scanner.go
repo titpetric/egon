@@ -268,7 +268,6 @@ func (s *Scanner) scanCommentContent() (string, error) {
 	return string(buf.Bytes()), nil
 }
 
-
 func (s *Scanner) read() (rune, error) {
 	ch, _, err := s.r.ReadRune()
 	if ch == '\n' {
