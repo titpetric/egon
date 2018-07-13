@@ -14,7 +14,6 @@ import (
 func init() {
 	kingpin.Version("0.9.0")
 	kingpin.Flag("extension", "templatefile extension").Short('e').Default("egon").StringVar(&egon.Config.TmplExtension)
-	kingpin.Flag("generateview", "generate view functions").Short('v').Default("false").BoolVar(&egon.Config.GenerateView)
 	kingpin.Flag("typesafe", "if present use provided flags for format-string").Short('t').Default("true").BoolVar(&egon.Config.Typesafe)
 	kingpin.Flag("stropt", "optimise string handling to reduce allocations").Short('s').Default("true").BoolVar(&egon.Config.StringOptimisations)
 	kingpin.Flag("debug", "include debug comments in generated code").Short('d').Default("false").BoolVar(&egon.Config.Debug)

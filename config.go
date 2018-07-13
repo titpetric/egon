@@ -1,7 +1,6 @@
 package egon
 
 var Config struct {
-	GenerateView        bool
 	Typesafe            bool
 	StringOptimisations bool
 	TmplExtension       string
