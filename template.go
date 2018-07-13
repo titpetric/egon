@@ -134,6 +134,12 @@ func (t *Template) Write(w io.Writer) error {
 	return err
 }
 
+func (t *Template) String() string {
+	buf := new(bytes.Buffer)
+	t.Write(buf)
+	return buf.String()
+}
+
 func (t *Template) writeParameters(buf *bytes.Buffer, params []*ParameterBlock) {
 	maxIndex := len(params) - 1
 	for i, param := range params {
@@ -221,3 +227,5 @@ func (t *Template) normalize() {
 	}
 	t.Blocks = a
 }
+
+var _ fmt.Stringer = &Template{}

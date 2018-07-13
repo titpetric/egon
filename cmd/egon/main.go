@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/SlinSo/egon"
+	"github.com/titpetric/egon"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
