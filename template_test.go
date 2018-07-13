@@ -1,7 +1,7 @@
 package egon_test
 
 import (
-	. "github.com/SlinSo/egon"
+	. "github.com/titpetric/egon"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -26,28 +26,8 @@
 
 
 [[constraint]]
-  name = "github.com/SlinSo/egon"
-  version = "0.1.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/SlinSo/goTemplateBenchmark"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/gin-gonic/contrib"
-
-[[constraint]]
-  name = "github.com/gin-gonic/gin"
-  version = "1.2.0"
-
-[[constraint]]
   name = "github.com/stretchr/testify"
   version = "1.2.2"
-
-[[constraint]]
-  name = "github.com/valyala/fasthttp"
-  version = "20180529.0.0"
 
 [[constraint]]
   name = "gopkg.in/alecthomas/kingpin.v2"

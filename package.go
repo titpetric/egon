@@ -71,7 +71,7 @@ func (p *Package) writeHeader(w io.Writer) error {
 	var decls = map[string]bool{`:"fmt"`: true, `:"io"`: true}
 	fmt.Fprint(&buf, "import (\n")
 	if Config.GenerateView {
-		fmt.Fprintln(&buf, `"github.com/SlinSo/egon"`)
+		fmt.Fprintln(&buf, `"github.com/titpetric/egon"`)
 	}
 	if p.Template.hasFmtPrintBlock() {
 		fmt.Fprintln(&buf, `"fmt"`)
