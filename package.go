@@ -27,4 +27,3 @@ func (p *Package) Write() error {
 
 	return nil
 }
-

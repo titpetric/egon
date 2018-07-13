@@ -2,10 +2,10 @@ package egon
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"fmt"
 	"io"
 	"path/filepath"
 	"regexp"
@@ -111,12 +111,14 @@ func (t *Template) Write(w io.Writer) error {
 	buf.WriteString("}\n\n")
 
 	// Write a simple `fn() string` function
-	fn := t.TemplateFuncName() + "String"
-	buf.WriteString(fmt.Sprintf("func %s() string {\n", fn))
-	buf.WriteString("\tbuf = new(bytes.Buffer)\n")
-	buf.WriteString("\t" + fmt.Sprintf("%s(buf)", fn))
-	buf.WriteString("\treturn buf.String()")
-	buf.WriteString("}\n")
+	/*
+		fn := t.TemplateFuncName() + "String"
+		buf.WriteString(fmt.Sprintf("func %s() string {\n", fn))
+		buf.WriteString("\tbuf = new(bytes.Buffer)\n")
+		buf.WriteString("\t" + fmt.Sprintf("%s(buf)\n", fn))
+		buf.WriteString("\treturn buf.String()\n")
+		buf.WriteString("}\n")
+	*/
 
 	// Write code to external writer.
 	_, err := buf.WriteTo(w)

@@ -5,8 +5,8 @@ import (
 	"io"
 	"testing"
 
-	. "github.com/titpetric/egon"
 	"github.com/stretchr/testify/assert"
+	. "github.com/titpetric/egon"
 )
 
 // Ensure that a text block can be scanned.
